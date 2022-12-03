@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::collections::HashSet;
 
 fn get_priority(c: &u8) -> i32 {
@@ -11,67 +12,67 @@ fn get_priority(c: &u8) -> i32 {
 
 #[aoc(day3, part1)]
 pub fn part1(input: &str) -> i32 {
-    let mut m: HashSet<&u8> = HashSet::new();
+    let mut m = HashSet::new();
     let mut result = 0;
+    let mut bytes: &[u8];
+    let mut mid: usize;
 
     for l in input.lines() {
-        m.clear();
-        let mid = l.len() / 2;
-        let collection_0 = &l.as_bytes()[..mid];
-        let collection_1 = &l.as_bytes()[mid..];
+        bytes = l.as_bytes();
+        mid = bytes.len() / 2;
 
-        for c in collection_0 {
+        for c in &bytes[..mid] {
             m.insert(c);
         }
 
-        for c in collection_1 {
+        for c in &bytes[mid..] {
             if m.contains(c) {
                 result += get_priority(c);
                 break;
             }
         }
+        m.clear();
     }
-
     result
 }
 
 #[aoc(day3, part2)]
 pub fn part2(input: &str) -> i32 {
-    let mut badge_set0 = HashSet::new();
-    let mut badge_set1 = HashSet::new();
-
+    let mut badge_set = HashMap::new();
     let mut result = 0;
+    let mut badge: &[u8];
 
     for (i, l) in input.lines().enumerate() {
-        let k = i % 3;
-        let badge = l.as_bytes();
+        badge = l.as_bytes();
 
-        match k {
-            // how index with ownership...?
+        match i % 3 {
             0 => {
                 for c in badge {
-                    badge_set0.insert(c);
+                    badge_set.insert(c, 1);
                 }
             }
             1 => {
                 for c in badge {
-                    badge_set1.insert(c);
+                    if badge_set.contains_key(c) {
+                        badge_set.insert(c, 2);
+                    }
                 }
             }
             2 => {
                 for c in badge {
-                    if badge_set0.contains(c) && badge_set1.contains(c) {
-                        result += get_priority(&c);
-                        break;
+                    match badge_set.get(c) {
+                        Some(2) => {
+                            result += get_priority(&c);
+                            break;
+                        }
+                        _ => (),
                     }
                 }
-                badge_set0.clear();
-                badge_set1.clear();
+                badge_set.clear();
             }
             _ => unreachable!(),
         }
     }
-
     result
 }
 
