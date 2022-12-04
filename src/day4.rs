@@ -13,8 +13,8 @@ impl FromStr for Assignment {
         let (l, r) = s.split_once(",").unwrap();
         let ((a, b), (c, d)) = (l.split_once('-').unwrap(), r.split_once('-').unwrap());
         Ok(Assignment {
-            l: (a.parse::<u8>().unwrap(), b.parse::<u8>().unwrap()),
-            r: (c.parse::<u8>().unwrap(), d.parse::<u8>().unwrap()),
+            l: (a.parse().unwrap(), b.parse().unwrap()),
+            r: (c.parse().unwrap(), d.parse().unwrap()),
         })
     }
 }
