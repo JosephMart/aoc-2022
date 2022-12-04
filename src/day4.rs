@@ -32,7 +32,7 @@ pub fn input_generator(input: &str) -> Vec<Assignment> {
 pub fn part1(assignments: &[Assignment]) -> usize {
     assignments
         .into_iter()
-        .filter(|a| (a.l.0 >= a.r.0 && a.l.1 <= a.r.1) || (a.r.0 >= a.l.0 && a.r.1 <= a.l.1))
+        .filter(|Assignment { l, r }| (l.0 >= r.0 && l.1 <= r.1) || (r.0 >= l.0 && r.1 <= l.1))
         .count()
 }
 
@@ -40,11 +40,11 @@ pub fn part1(assignments: &[Assignment]) -> usize {
 pub fn part2(assignments: &[Assignment]) -> usize {
     assignments
         .into_iter()
-        .filter(|a| {
-            (a.l.0 >= a.r.0 && a.l.0 <= a.r.1)
-                || (a.l.1 >= a.r.0 && a.l.1 <= a.r.1)
-                || (a.r.0 >= a.l.0 && a.r.0 <= a.l.1)
-                || (a.r.1 >= a.l.0 && a.r.1 <= a.l.1)
+        .filter(|Assignment { l, r }| {
+            (l.0 >= r.0 && l.0 <= r.1)
+                || (l.1 >= r.0 && l.1 <= r.1)
+                || (r.0 >= l.0 && r.0 <= l.1)
+                || (r.1 >= l.0 && r.1 <= l.1)
         })
         .count()
 }
