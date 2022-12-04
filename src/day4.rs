@@ -1,7 +1,6 @@
 use std::str::FromStr;
 
 #[derive(Debug)]
-
 pub struct Assignment {
     l: (u8, u8),
     r: (u8, u8),
