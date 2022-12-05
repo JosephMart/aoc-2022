@@ -10,7 +10,6 @@ pub struct Command {
 impl FromStr for Command {
     type Err = ();
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        // move 1 from 3 to 9
         let data: Vec<&str> = s.split_whitespace().collect();
         Ok(Command {
             count: data[1].parse().unwrap(),
@@ -22,39 +21,31 @@ impl FromStr for Command {
 
 #[aoc_generator(day5)]
 pub fn input_generator(input: &str) -> (Vec<Vec<char>>, Vec<Command>) {
-    let mut stacks: Vec<Vec<char>> = Vec::new();
     let (stack_data, commands_data) = input.split_once("\n\n").unwrap();
+    let mut stack_data = stack_data.lines().rev();
+    let mut stacks: Vec<Vec<char>> =
+        vec![Vec::new(); stack_data.next().unwrap().split_whitespace().count()];
 
-    for line in stack_data.lines().rev() {
-        let bytes = line.as_bytes();
-        let length = line.split_whitespace().into_iter().count();
+    stack_data.for_each(|line| {
+        line.as_bytes()
+            .chunks(4)
+            .enumerate()
+            .for_each(|(i, chunk)| {
+                let c = chunk[1] as char;
+                if !c.is_whitespace() {
+                    stacks[i].push(c);
+                }
+            });
+    });
 
-        // Populate on first.
-        if stacks.len() == 0 {
-            stacks = vec![Vec::new(); length];
-            continue;
-        }
-
-        let mut char_i = 1;
-        let mut stack_i = 0;
-
-        while char_i < bytes.len() {
-            let c = bytes[char_i] as char;
-            if c != ' ' {
-                stacks[stack_i].push(c);
-            }
-            char_i += 4;
-            stack_i += 1;
-        }
-    }
-
-    let commands: Vec<Command> = commands_data
-        .lines()
-        .into_iter()
-        .map(|c| c.parse().unwrap())
-        .collect();
-
-    (stacks, commands)
+    (
+        stacks,
+        commands_data
+            .lines()
+            .into_iter()
+            .map(|c| c.parse().unwrap())
+            .collect(),
+    )
 }
 
 #[aoc(day5, part1)]
