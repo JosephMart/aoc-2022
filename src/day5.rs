@@ -31,9 +31,7 @@ pub fn input_generator(input: &str) -> (Vec<Vec<char>>, Vec<Command>) {
 
         // Populate on first.
         if stacks.len() == 0 {
-            for _ in 0..length {
-                stacks.push(Vec::new());
-            }
+            stacks = vec![Vec::new(); length];
             continue;
         }
 
@@ -61,33 +59,31 @@ pub fn input_generator(input: &str) -> (Vec<Vec<char>>, Vec<Command>) {
 
 #[aoc(day5, part1)]
 pub fn part1((stacks, commands): &(Vec<Vec<char>>, Vec<Command>)) -> String {
-    let mut s = stacks.clone(); // i should read the docs...
-    for command in commands {
-        for _ in 0..command.count {
-            let x = s[command.from].pop().unwrap();
-            s[command.to].push(x);
-        }
-    }
-
-    s.iter().map(|a| a.last().unwrap()).collect()
+    let mut stacks = stacks.clone();
+    commands.iter().for_each(|command| {
+        let l = stacks[command.from].len();
+        stacks[command.from]
+            .drain(l - command.count..)
+            .collect::<Vec<_>>()
+            .iter()
+            .rev()
+            .for_each(|c| stacks[command.to].push(*c));
+    });
+    stacks.iter().map(|a| a.last().unwrap()).collect()
 }
 
 #[aoc(day5, part2)]
 pub fn part2((stacks, commands): &(Vec<Vec<char>>, Vec<Command>)) -> String {
-    let mut s = stacks.clone(); // i should read the docs...
-    for command in commands {
-        let mut inbetween = Vec::new();
-        for _ in 0..command.count {
-            let x = s[command.from].pop().unwrap();
-            inbetween.push(x);
-        }
-
-        for _ in 0..inbetween.len() {
-            s[command.to].push(inbetween.pop().unwrap());
-        }
-    }
-
-    s.iter().map(|a| a.last().unwrap()).collect()
+    let mut stacks = stacks.clone();
+    commands.iter().for_each(|command| {
+        let l = stacks[command.from].len();
+        stacks[command.from]
+            .drain(l - command.count..)
+            .collect::<Vec<_>>()
+            .iter()
+            .for_each(|c| stacks[command.to].push(*c));
+    });
+    stacks.iter().map(|a| a.last().unwrap()).collect()
 }
 
 #[cfg(test)]
